@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import { Message } from '@/types';
+import type { Message } from '@/types';
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -19,16 +19,20 @@ export default function Chat() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    const messageText = input.trim();
+    if (!messageText || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: input.trim(),
+      text: messageText,
       sender: 'user',
       timestamp: new Date(),
     };
 
+    // Add user message immediately
     setMessages((prev) => [...prev, userMessage]);
+
+    // Clear input and set loading
     setInput('');
     setIsLoading(true);
 
@@ -38,47 +42,41 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input.trim() }),
+        body: JSON.stringify({ message: messageText }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: data.response,
-          sender: 'assistant',
-          timestamp: new Date(),
-          slackContext: data.slackContext,
-        };
+      const assistantText =
+        response.ok && typeof data?.response === 'string'
+          ? data.response
+          : 'Sorry, I encountered an error. Please try again.';
 
-        setMessages((prev) => [...prev, assistantMessage]);
-      } else {
-        const errorMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: 'Sorry, I encountered an error. Please try again.',
-          sender: 'assistant',
-          timestamp: new Date(),
-        };
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: assistantText,
+        sender: 'assistant',
+        timestamp: new Date(),
+        // include slackContext only if present
+        ...(data?.slackContext ? { slackContext: data.slackContext } : {}),
+      };
 
-        setMessages((prev) => [...prev, errorMessage]);
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (err) {
+      console.error('Error sending message:', err);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: 'Sorry, I encountered an error. Please try again.',
         sender: 'assistant',
         timestamp: new Date(),
       };
-
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -98,7 +96,7 @@ export default function Chat() {
               Support Assistant
             </h1>
             <p className="text-sm text-gray-500">
-              Powered by GPT & Slack Support Channel
+              Powered by GPT &amp; Slack Support Channel
             </p>
           </div>
         </div>
@@ -113,7 +111,7 @@ export default function Chat() {
               Welcome to Support Assistant
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Ask me anything and Ill search our Slack support channel to
+              Ask me anything and I&apos;ll search our Slack support channel to
               provide you with the most relevant answers.
             </p>
           </div>
@@ -138,7 +136,9 @@ export default function Chat() {
                   <Bot className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                 )}
                 <div className="flex-1">
-                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  <p className="text-sm whitespace-pre-wrap">
+                    {message.text ?? ''}
+                  </p>
                   {message.slackContext && (
                     <p className="text-xs text-gray-500 mt-2 italic">
                       {message.slackContext}
@@ -174,18 +174,22 @@ export default function Chat() {
           <div className="flex-1">
             <textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setInput(e.target.value)
+              }
+              onKeyDown={handleKeyDown}
               placeholder="Ask me anything about our support..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={1}
               disabled={isLoading}
+              aria-label="Message"
             />
           </div>
           <button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Send message"
           >
             <Send className="w-5 h-5" />
           </button>
