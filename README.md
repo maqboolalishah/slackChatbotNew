@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Support Assistant - GPT & Slack Integration
 
-## Getting Started
+A Next.js application that allows users to ask questions and get AI-powered responses based on Slack support channel discussions.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🤖 AI-powered responses using OpenAI GPT-4
+- 📱 Modern chat interface similar to ChatGPT
+- 🔍 Real-time search through Slack support channels
+- 💬 Message history and context awareness
+- ⚡ Fast and responsive UI with Tailwind CSS
+
+## Prerequisites
+
+- Node.js 18+ 
+- OpenAI API key
+- Slack Bot Token with appropriate permissions
+- Slack Support Channel ID
+
+## Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd slack-gpt-support
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   
+   Create a `.env.local` file in the root directory with:
+   ```env
+   # OpenAI
+   OPENAI_API_KEY=your_openai_api_key_here
+   
+   # Slack
+   SLACK_BOT_TOKEN=your_slack_bot_token_here
+   SUPPORT_CHANNEL_ID=your_support_channel_id_here
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Slack Bot Setup
+
+To use this application, you need a Slack bot with the following permissions:
+
+- `search:read` - To search messages in channels
+- `channels:read` - To read channel information
+- `groups:read` - To read private channel information
+
+### Required Slack App Scopes:
+- `search:read`
+- `channels:read`
+- `groups:read`
+
+## API Endpoints
+
+### POST /api/chat
+Sends a message to the AI assistant with Slack context.
+
+**Request Body:**
+```json
+{
+  "message": "Your question here"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Response:**
+```json
+{
+  "response": "AI-generated response",
+  "slackContext": "Information about Slack messages found"
+}
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Vercel (Recommended)
 
-## Learn More
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
 
-To learn more about Next.js, take a look at the following resources:
+### Other Platforms
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- DigitalOcean App Platform
+- AWS Amplify
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_KEY` | Your OpenAI API key | Yes |
+| `SLACK_BOT_TOKEN` | Your Slack bot token | Yes |
+| `SUPPORT_CHANNEL_ID` | ID of your Slack support channel | Yes |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Technologies Used
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 14** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **OpenAI API** - AI responses
+- **Slack Web API** - Slack integration
+- **Lucide React** - Icons
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details
