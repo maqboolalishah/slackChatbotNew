@@ -113,7 +113,7 @@ export default function Chat() {
               Welcome to Support Assistant
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Ask me anything and I'll search our Slack support channel to
+              Ask me anything and Ill search our Slack support channel to
               provide you with the most relevant answers.
             </p>
           </div>
