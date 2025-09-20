@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import { Message, ChatResponse } from '@/types';
+import { Message } from '@/types';
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,7 +28,7 @@ export default function Chat() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -52,7 +52,7 @@ export default function Chat() {
           slackContext: data.slackContext,
         };
 
-        setMessages(prev => [...prev, assistantMessage]);
+        setMessages((prev) => [...prev, assistantMessage]);
       } else {
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -61,7 +61,7 @@ export default function Chat() {
           timestamp: new Date(),
         };
 
-        setMessages(prev => [...prev, errorMessage]);
+        setMessages((prev) => [...prev, errorMessage]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -72,7 +72,7 @@ export default function Chat() {
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -94,8 +94,12 @@ export default function Chat() {
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Support Assistant</h1>
-            <p className="text-sm text-gray-500">Powered by GPT & Slack Support Channel</p>
+            <h1 className="text-xl font-semibold text-gray-900">
+              Support Assistant
+            </h1>
+            <p className="text-sm text-gray-500">
+              Powered by GPT & Slack Support Channel
+            </p>
           </div>
         </div>
       </div>
@@ -105,9 +109,12 @@ export default function Chat() {
         {messages.length === 0 && (
           <div className="text-center py-12">
             <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Welcome to Support Assistant</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Welcome to Support Assistant
+            </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Ask me anything and I'll search our Slack support channel to provide you with the most relevant answers.
+              Ask me anything and I'll search our Slack support channel to
+              provide you with the most relevant answers.
             </p>
           </div>
         )}
@@ -115,7 +122,9 @@ export default function Chat() {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${
+              message.sender === 'user' ? 'justify-end' : 'justify-start'
+            }`}
           >
             <div
               className={`max-w-[70%] rounded-lg px-4 py-3 ${

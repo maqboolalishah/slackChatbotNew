@@ -19,18 +19,11 @@ export async function GET() {
     };
 
     const hasAllConfig = openaiKey && slackToken && channelId;
-    
+
     return NextResponse.json(status, {
       status: hasAllConfig ? 200 : 503,
     });
-  } catch (error) {
-    return NextResponse.json(
-      { 
-        status: 'error', 
-        message: 'Health check failed',
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }
