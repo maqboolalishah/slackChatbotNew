@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { WebClient } from '@slack/web-api';
@@ -69,7 +70,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function searchSlackSupport(query: string): Promise<SlackMessage[]> {
   try {
     // Search for messages in the support channel
@@ -81,18 +81,15 @@ async function searchSlackSupport(query: string): Promise<SlackMessage[]> {
     });
 
     if (result.messages?.matches) {
+      // Filter to only include messages from our support channel
       const supportChannelId = process.env.SUPPORT_CHANNEL_ID;
-      return (
-        result.messages.matches
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .filter((msg: any) => msg.channel?.id === supportChannelId)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((msg: any) => ({
-            ...msg,
-            text: msg.text ?? '',
-          }))
-          .slice(0, 5)
-      );
+      return result.messages.matches
+        .filter((msg: any) => msg.channel?.id === supportChannelId)
+        .slice(0, 5)
+        .map((msg: any) => ({
+          ...msg,
+          text: msg.text ?? '',
+        })); // Ensure text is always a string
     }
 
     return [];
