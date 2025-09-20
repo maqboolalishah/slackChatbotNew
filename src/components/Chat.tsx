@@ -57,7 +57,6 @@ export default function Chat() {
         text: assistantText,
         sender: 'assistant',
         timestamp: new Date(),
-        // include slackContext only if present
         ...(data?.slackContext ? { slackContext: data.slackContext } : {}),
       };
 
@@ -111,7 +110,7 @@ export default function Chat() {
               Welcome to Support Assistant
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Ask me anything and I&apos;ll search our Slack support channel to
+              Ask me anything and I&#39;ll search our Slack support channel to
               provide you with the most relevant answers.
             </p>
           </div>
